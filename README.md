@@ -1,67 +1,65 @@
-# Geometry Wars Max
+# Geometric Life 🐟
 
-Clone du jeu Geometry Wars - Next.js + Canvas 2D, déployé sur Vercel.
+Simulation d'aquarium cyberpunk avec évolution génétique.
 
-![Status](https://img.shields.io/badge/status-playable-green)
+![Geometric Life](screenshot.png)
 
-## 🎮 Jouer
+## Concept
+
+Un **aquarium vivant** où des créatures géométriques néon nagent, chassent, se reproduisent et évoluent. Observez l'écosystème depuis une vue "dieu" et influencez l'environnement sans contrôler directement les créatures.
+
+## Fonctionnalités
+
+### Écosystème
+- 🌿 **Plankton** - Nourriture verte pulsante qui spawn automatiquement
+- 🐠 **Herbivores** - Créatures cyan qui mangent le plancton et fuient les prédateurs
+- 🦈 **Prédateurs** - Créatures magenta qui chassent les herbivores
+
+### Système Génétique
+Chaque créature possède un génome unique qui définit :
+- **Morphologie** : forme (3-8 côtés), taille, couleur, luminosité
+- **Comportement** : vitesse, agilité, perception, agressivité, sociabilité
+- **Métabolisme** : consommation d'énergie, efficacité, fertilité, longévité
+
+### Contrôles
+| Action | Interaction |
+|--------|-------------|
+| Placer nourriture | Clic gauche |
+| Pan (déplacer vue) | Clic droit + drag |
+| Zoom | Molette souris |
+| Pause | ESPACE |
+| Vitesse x1/x2/x5 | 1 / 2 / 3 |
+| Reset vue | R |
+
+## Stack Technique
+
+- **Framework** : Next.js 16 (App Router)
+- **Langage** : TypeScript
+- **Rendu** : Canvas 2D avec effets néon/glow
+- **Style** : Cyberpunk aquarium, fullscreen adaptatif
+
+## Installation
 
 ```bash
+# Cloner le repo
+git clone https://github.com/limax84/geometric-life.git
+cd geometric-life
+
+# Installer les dépendances
 npm install
+
+# Lancer en dev
 npm run dev
-# Ouvrir http://localhost:3000
 ```
 
-## 🕹️ Contrôles
+Ouvrir [http://localhost:3000](http://localhost:3000)
 
-| Touche | Action |
-|--------|--------|
-| ZQSD | Se déplacer |
-| Souris | Viser |
-| Clic | Tirer |
-| SPACE | Utiliser une bombe |
-| TAB | Changer mode de contrôle (ABS/REL) |
-| P | Pause |
+## Roadmap
 
-## ✨ Fonctionnalités
-
-- **3 types d'ennemis** : Wanderer, Chaser, Shooter
-- **6 power-ups** : Shield, Rapid Fire, Spread Shot, Speed Boost, Extra Life, Bomb
-- **Système de vagues** avec difficulté progressive
-- **Musique électro** générée procéduralement
-- **Effets visuels** : néon, distorsion de grille, particules
-- **Sauvegarde locale** : high scores, statistiques
-- **2 modes de contrôle** : absolu (défaut) et relatif
-
-## 🛠️ Stack
-
-- Next.js 16 + TypeScript
-- Canvas 2D (effets néon/glow)
-- Web Audio API (sons et musique procéduraux)
-- localStorage (persistance)
-- Tailwind CSS
-- Vercel (déploiement)
-
-## 📁 Structure
-
-```
-src/
-├── app/              # Next.js App Router
-├── components/       # React (GameCanvas)
-└── game/
-    ├── engine/       # GameEngine, Camera
-    ├── entities/     # Player, Bullet, Enemy, PowerUp, Particle
-    ├── systems/      # Input, Render, Collision, Audio, Storage, Wave
-    └── types.ts      # Config & types
-```
-
-## 📋 Roadmap
-
-- [x] Phase 1: Fondations (moteur, caméra, inputs)
-- [x] Phase 2: Gameplay (tir, ennemis, collisions, score)
-- [x] Phase 3: Audio & polish (sons, musique, effets visuels)
-- [x] Phase 4: Power-ups, menu, pause, bombes, scores
-- [ ] Phase 5: Boss, nouveaux ennemis, effets avancés
+- [x] **Phase 1** : Rendu visuel aquarium cyberpunk
+- [x] **Phase 2** : Créatures avec génome et comportements IA
+- [ ] **Phase 3** : Interface de monitoring et contrôles avancés
+- [ ] **Phase 4** : Reproduction et évolution génétique
 
 ## Licence
 

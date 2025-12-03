@@ -1,14 +1,24 @@
-# Geometry Wars Max
+# Geometric Life
 
-Clone de Geometry Wars en Next.js/Canvas 2D pour Vercel.
+Simulation d'aquarium cyberpunk avec évolution génétique en Next.js/Canvas 2D.
 
-> **Instructions Claude**: À ta première réponse dans une nouvelle session, confirme: "Prêt ! Projet Geometry Wars Max."
+> **Instructions Claude**: À ta première réponse dans une nouvelle session, confirme: "Prêt ! Projet Geometric Life."
+
+## Concept
+
+Un **aquarium vivant** où des créatures géométriques néon nagent, chassent, se reproduisent et évoluent. L'utilisateur observe l'écosystème depuis une vue "dieu" et peut influencer l'environnement sans contrôler directement les créatures.
+
+### Caractéristiques principales
+- **Contemplatif** : observation et paramétrage, pas de gameplay actif
+- **Évolution génétique** : créatures avec génome qui évolue sur les générations
+- **Écosystème** : chaîne alimentaire plancton → herbivores → prédateurs
+- **Interactions godlike** : modifier l'environnement, déclencher des événements
+- **Design** : cyberpunk aquarium néon, fullscreen adaptatif
 
 ## Stack
 - Next.js 16 (App Router) + TypeScript
-- Canvas 2D (effets néon/glow)
-- Web Audio API (sons procéduraux)
-- localStorage (sauvegarde)
+- Canvas 2D (effets néon/glow cyberpunk)
+- localStorage (sauvegarde par slots)
 
 ## Commandes
 ```bash
@@ -16,97 +26,159 @@ npm run dev    # Dev :3000
 npm run build  # Build prod
 ```
 
-## Contrôles
-| Touche | Action |
-|--------|--------|
-| ZQSD | Déplacement |
-| Souris | Visée |
-| Clic | Tir |
-| SPACE | Bombe |
-| TAB | Mode ABS/REL |
-| P/Echap | Pause |
-| M | Mute |
-| O | Options (menu) |
-
-## Options Graphiques
-| Qualité | shadowBlur | Particules | Étoiles | Distorsion | GPU recommandé |
-|---------|------------|------------|---------|------------|----------------|
-| Potato | OFF | 30 max | 30 | OFF | Intel HD ancien |
-| Low | OFF | 50 max | 50 | OFF | Intel UHD intégré |
-| Medium | 30% | 100 max | 100 | OFF | Intel Iris Xe |
-| High | 70% | 300 max | 200 | ON | GPU dédié entrée |
-| Ultra | 100% | 500 max | 270 | ON | RTX/Gaming |
-
-### Auto-détection
-- Le jeu détecte automatiquement les FPS au démarrage
-- Si FPS < seuils configurés, la qualité baisse automatiquement
-- Désactivable dans Options > Auto Quality: OFF
-- Affichage FPS en haut à droite (toggle dans Options)
-
 ## Architecture
 ```
-src/game/
-├── engine/    GameEngine, Camera
-├── entities/  Player, Bullet, Enemy, EnemyBullet, Particle, PowerUp
-├── systems/   InputManager, RenderSystem, CollisionSystem, AudioManager, StorageManager, WaveManager
-├── utils/     Vector2
-└── types.ts   Types + GAME_CONFIG
+src/
+├── app/                      # Next.js App Router
+│   ├── globals.css           # Styles + thème cyberpunk
+│   ├── layout.tsx
+│   └── page.tsx
+│
+├── components/
+│   ├── AquariumCanvas.tsx    # Canvas principal
+│   └── UI/                   # Panneaux de contrôle
+│
+├── simulation/
+│   ├── types.ts              # Types + CONFIG
+│   ├── core/                 # Moteur simulation
+│   │   ├── Simulation.ts
+│   │   ├── World.ts
+│   │   └── TimeManager.ts
+│   ├── entities/             # Créatures
+│   │   ├── Creature.ts
+│   │   ├── Plankton.ts
+│   │   ├── Herbivore.ts
+│   │   ├── Predator.ts
+│   │   └── Egg.ts
+│   ├── genetics/             # Système génétique
+│   │   ├── Genome.ts
+│   │   ├── GeneExpression.ts
+│   │   └── Reproduction.ts
+│   ├── behaviors/            # Comportements IA
+│   │   ├── Steering.ts
+│   │   ├── Feeding.ts
+│   │   └── Mating.ts
+│   ├── systems/              # Systèmes ECS
+│   │   ├── RenderSystem.ts
+│   │   ├── PhysicsSystem.ts
+│   │   └── LifecycleSystem.ts
+│   └── utils/
+│       ├── Vector2.ts
+│       └── Color.ts
+│
+└── storage/
+    └── SaveManager.ts
 ```
 
-## Ennemis
-| Type | Couleur | Comportement | Points | Vague |
-|------|---------|--------------|--------|-------|
-| Wanderer | Magenta | Aléatoire | 100 | 1 |
-| Chaser | Orange | Poursuit | 150 | 2 |
-| Diamond | Bleu | Vers joueur | 120 | 3 |
-| Shooter | Vert | Tire | 200 | 4 |
-| Dodger | Rouge | Esquive tirs (très réactif) | 250 | 5 |
-| Splitter | Orange doré | Se divise en 3 mini | 180 | 6 |
-| Snake | Vert | 9 segments, détruire par la queue | 300+270 | 7 |
-| **Boss Hexagon** | Magenta | Téléportation + 5 tirs en éventail | 5000 | 10,20,30... |
+## Système Génétique
 
-### Snake (spécial)
-- Composé uniquement de boules (tête rouge, corps vert)
-- **Toutes les boules sont destructibles** (n'importe laquelle)
-- Chaque boule = 30 pts (tête = 50 pts)
-- Le snake meurt quand toutes ses boules sont détruites
+Chaque créature possède un génome (valeurs 0-1) encodant :
 
-### Boss Hexagon (vagues 10, 20, 30...)
-- Vagues boss : uniquement des boss, pas d'autres ennemis
-- Nombre de boss = niveau / 10 (1 à la vague 10, 2 à la vague 20...)
-- 50 HP avec barre de vie visible
-- Se téléporte toutes les 3s (flash blanc)
-- Tire 5 projectiles en éventail toutes les 1.5s
-- 5000 points par boss
+### Morphologie
+| Gène | Effet |
+|------|-------|
+| `shape` | Nombre de côtés (3-8) |
+| `size` | Taille de la créature |
+| `hue` | Couleur de base (teinte) |
+| `luminosity` | Intensité du glow |
+| `pattern` | Motif (uni, rayé, pulsant) |
 
-## Power-ups
-| Type | Symbole | Couleur | Effet |
-|------|---------|---------|-------|
-| Shield | S | Cyan | Protection 5s |
-| Rapid Fire | R | Jaune | Tir 2.5x 8s |
-| Spread Shot | W | Orange | 3 tirs 6s |
-| Speed Boost | V | Vert | +50% vitesse 7s |
-| Extra Life | + | Magenta | +1 vie (max 5) |
-| Piercing | > | Magenta | Tirs traversants 10s |
-| Double Shot | D | Cyan clair | Chaque balle doublée 8s |
-| Bomb | B | Rose | +1 bombe |
+### Comportement
+| Gène | Effet |
+|------|-------|
+| `speed` | Vitesse de nage max |
+| `agility` | Capacité à tourner |
+| `perception` | Rayon de détection |
+| `aggression` | Tendance à chasser/fuir |
+| `sociability` | Attirance vers congénères |
 
-### Power-ups Perpétuels (∞)
-- Version rare (10% de chance) des power-ups temporaires
-- **Conservés jusqu'à la mort** du joueur
-- Indicateur doré avec symbole ∞
-- Types: Rapid Fire, Spread Shot, Speed Boost, Piercing, Double Shot
-- Shield ne peut PAS être perpétuel
+### Métabolisme
+| Gène | Effet |
+|------|-------|
+| `metabolism` | Consommation d'énergie |
+| `efficiency` | Extraction d'énergie |
+| `fertility` | Fréquence reproduction |
+| `longevity` | Durée de vie max |
 
-## Config
-- Arène: 2000×1400
-- Multiplicateur score: max x100, decay 3s
-- Spawn: bords de l'arène, >300px du joueur
-- Game Over: Enter uniquement (pas de clic)
+## Chaîne Alimentaire
 
-## Secrets
-### Cachette de bombes
-- **Position**: Zone invisible sur le mur du bas, coin gauche (0-150px)
-- **Condition**: Joueur a 0 bombes
-- **Récompense**: +3 bombes
-- **Réactivation**: Dès que le joueur n'a plus de bombes
+```
+Plancton (vert) → Herbivores (cyan) → Prédateurs (magenta)
+     ↑                   ↑                    ↑
+  Spawn auto         Mangent plancton    Mangent herbivores
+```
+
+## Interactions Godlike
+
+### Paramétrage
+- Vitesse de simulation (x1, x2, x5, pause)
+- Taux de spawn de nourriture
+- Taux de mutation
+- Température (affecte métabolisme)
+
+### Interventions
+- Placer de la nourriture (clic)
+- Déclencher événements (tempête, abondance)
+- Bénir/maudire une créature
+- Sélectionner et suivre une créature
+
+### Monitoring
+- Population par espèce
+- Énergie moyenne
+- Distribution des gènes
+- Arbre généalogique
+
+## Palette de Couleurs
+
+| Élément | Couleur | Hex |
+|---------|---------|-----|
+| Fond profond | Noir-bleu | `#0a0a1a` |
+| Grille Tron | Cyan sombre | `#0d3d4d` |
+| Plancton | Vert néon | `#00ff88` |
+| Herbivores | Cyan | `#00ffff` |
+| Prédateurs | Magenta | `#ff0066` |
+| UI | Gris translucide | `rgba(20,30,40,0.8)` |
+| Accent | Or | `#ffcc00` |
+
+## Roadmap
+
+### Phase 1 : Rendu Visuel ✅ TERMINÉ
+- [x] Documentation projet
+- [x] Nettoyage code Geometry Wars
+- [x] Fond aquarium cyberpunk (dégradé profond)
+- [x] Grille Tron avec glow
+- [x] Effets caustiques (rayons ondulants)
+- [x] Particules ambiantes flottantes
+- [x] UI de base (FPS, contrôles)
+
+### Phase 2 : Créatures & Génome ✅ TERMINÉ
+- [x] Structure génome (Genome.ts)
+- [x] Expression génétique → apparence/comportement
+- [x] Classe Creature de base
+- [x] Comportements de nage (steering behaviors)
+- [x] Plankton (nourriture verte pulsante)
+- [x] Herbivores (cyan, fuient les prédateurs, mangent plancton)
+- [x] Predators (magenta, chassent les herbivores)
+- [x] Intégration écosystème fonctionnel
+
+### Phase 3 : Interface & Monitoring
+- [ ] Panneau de contrôle
+- [ ] Statistiques temps réel
+- [ ] Sélection créature
+- [ ] Sauvegarde/chargement
+
+### Phase 4 : Évolution
+- [ ] Reproduction
+- [ ] Crossover + mutations
+- [ ] Pression de sélection
+
+## Contrôles (à définir)
+
+| Action | Interaction |
+|--------|-------------|
+| Zoom | Molette |
+| Pan | Clic droit + drag |
+| Placer nourriture | Clic gauche |
+| Sélectionner créature | Clic sur créature |
+| Pause | Espace |
+| Vitesse simulation | 1/2/3 |

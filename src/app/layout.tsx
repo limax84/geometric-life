@@ -13,12 +13,12 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "Geometry Wars Max",
-  description: "Clone de Geometry Wars - Jeu d'arcade néon",
+  title: 'Geometric Life',
+  description: 'Aquarium cyberpunk avec évolution génétique - Simulation de vie contemplative',
   icons: {
     icon: '/ship-favicon.svg',
   },
-};
+}
 
 export default function RootLayout({
   children,
