@@ -1,0 +1,49 @@
+@import "tailwindcss";
+
+:root {
+  --background: #0a0a0f;
+  --foreground: #00ffff;
+  --neon-cyan: #00ffff;
+  --neon-magenta: #ff00ff;
+  --neon-yellow: #ffff00;
+  --neon-green: #00ff00;
+}
+
+@theme inline {
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --font-sans: var(--font-geist-sans);
+  --font-mono: var(--font-geist-mono);
+}
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+html, body {
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+  background: var(--background);
+  color: var(--foreground);
+  font-family: 'Courier New', monospace;
+}
+
+canvas {
+  user-select: none;
+  -webkit-user-select: none;
+}
+
+/* Cacher l'indicateur Next.js en bas à gauche */
+#__next-build-watcher {
+  display: none !important;
+}
+
+/* Cacher tous les éléments de dev Next.js */
+[data-nextjs-dialog-overlay],
+[data-nextjs-dialog],
+[data-nextjs-portal] {
+  display: none !important;
+}
